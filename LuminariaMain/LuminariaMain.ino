@@ -30,7 +30,7 @@
 // ============================================
 // Hardware-Konfiguration
 // ============================================
-#define LED_PIN       23        // DIN Pin (Datenleitung)
+#define LED_PIN       16        // DIN Pin (Datenleitung)
 #define NUM_LEDS      64        // 8x8 = 64 LEDs
 #define BRIGHTNESS    50        // Helligkeit (0-255)
 #define LED_TYPE      WS2812B   // LED Typ
