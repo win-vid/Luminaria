@@ -31,13 +31,12 @@
 // Hardware-Konfiguration
 // ============================================
 #define LED_PIN       16        // DIN Pin (Datenleitung)
-#define NUM_LEDS      64        // 8x8 = 64 LEDs
 #define BRIGHTNESS    50        // Helligkeit (0-255)
 #define LED_TYPE      WS2812B   // LED Typ
 #define COLOR_ORDER   GRB       // Farbordnung der LEDs
 #define MATRIX_WIDTH  8         // Breite der Matrix
 #define MATRIX_HEIGHT 8         // Höhe der Matrix
-
+#define NUM_LEDS      (MATRIX_WIDTH * MATRIX_HEIGHT)
 // ============================================
 // Matrix-Layout
 // ============================================
@@ -92,8 +91,8 @@ void setup() {
 
 void loop() {
   // Beispiel: Hin und her zwischen Blau und aktuellem Zustand
-  ColourFadeTo(CRGB::Blue, 2000);   // 2 Sekunden zu Blau
+  ColourFadeTo(CRGB::Blue, 20000);   // 2 Sekunden zu Blau
   delay(1000);
   ColourFadeBack(2000);             // 2 Sekunden zurück
-  delay(1000);
+  delay(10);
 }
