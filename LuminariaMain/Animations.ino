@@ -84,3 +84,13 @@ void ColourFade(CRGB startColor, CRGB endColor, uint16_t totalTime) {
   
   currentColor = endColor;
 }
+
+void TestImage(){
+  for(hue = 0; hue <= 255; hue++){
+    // Increment hue each frame for animation
+    fill_rainbow(leds, NUM_LEDS, hue, 7);  // 7 = spacing between LEDs
+    FastLED.show();
+    
+    delay(10);  // ~20 FPS, smooth enough
+  }
+}

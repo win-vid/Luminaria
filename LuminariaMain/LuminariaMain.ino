@@ -37,6 +37,8 @@
 #define MATRIX_WIDTH  8         // Breite der Matrix
 #define MATRIX_HEIGHT 8         // Höhe der Matrix
 #define NUM_LEDS      (MATRIX_WIDTH * MATRIX_HEIGHT)
+
+
 // ============================================
 // Matrix-Layout
 // ============================================
@@ -62,6 +64,7 @@
 CRGB leds[NUM_LEDS];                 // LED Array
 CRGB currentColor = CRGB::Black;     // Aktuelle Farbe der Matrix
 CRGB previousColor = CRGB::Black;    // Vorherige Farbe (für Hin-und-Her-Fades)
+int hue = 0;
 
 // ============================================
 // Setup & Loop
@@ -81,8 +84,11 @@ void setup() {
   
   // Testmuster: Alle LEDs rot
   fill_solid(leds, NUM_LEDS, CRGB::Red);
+  fill_rainbow_circular(leds, NUM_LEDS, hue);
   FastLED.show();
   currentColor = CRGB::Red;
+
+
   
   Serial.println("✓ Matrix initialisiert");
   Serial.println("✓ Testmuster aktiv (Rot)");
@@ -90,9 +96,6 @@ void setup() {
 }
 
 void loop() {
-  // Beispiel: Hin und her zwischen Blau und aktuellem Zustand
-  ColourFadeTo(CRGB::Blue, 20000);   // 2 Sekunden zu Blau
-  delay(1000);
-  ColourFadeBack(2000);             // 2 Sekunden zurück
-  delay(10);
+  TestImage();
 }
+
