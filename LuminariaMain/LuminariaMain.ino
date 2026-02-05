@@ -31,7 +31,7 @@
 // Hardware-Konfiguration
 // ============================================
 #define LED_PIN       16        // DIN Pin (Datenleitung)
-#define BRIGHTNESS    50        // Helligkeit (0-255)
+#define BRIGHTNESS    50         // Helligkeit (0-255)
 #define LED_TYPE      WS2812B   // LED Typ
 #define COLOR_ORDER   GRB       // Farbordnung der LEDs
 #define MATRIX_WIDTH  8         // Breite der Matrix
@@ -96,6 +96,7 @@ void setup() {
 }
 
 void loop() {
-  TestImage();
+  Fire(leds, MATRIX_WIDTH, MATRIX_HEIGHT);
+  
 }
 

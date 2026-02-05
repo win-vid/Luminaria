@@ -86,12 +86,49 @@ void ColourFade(CRGB startColor, CRGB endColor, uint16_t totalTime) {
 }
 
 // Generates a rainbow test image. Used to test functionality of the LED-Matrix.
-void TestImage(){
-  for(hue = 0; hue <= 255; hue++){
-    // Increment hue each frame for animation
-    fill_rainbow(leds, NUM_LEDS, hue, 7);  // 7 = spacing between LEDs
+  void TestImage(){
+    for(hue = 0; hue <= 255; hue++){
+      // Increment hue each frame for animation
+      fill_rainbow(leds, NUM_LEDS, hue, 7);  // 7 = spacing between LEDs
+      FastLED.show();
+      
+      delay(10);
+  }
+  }
+
+// Emulated a fire flicker effect 
+void Fire(CRGB* leds, int height, int width){
+  BlendCheckerBoard(leds, CRGB::Red, CRGB::Orange, height, width);
+  FastLED.setBrightness(random(30,100));
+  BlendCheckerBoard(leds, CRGB::Orange, CRGB::Red, height, width);
+  FastLED.setBrightness(random(30,100));
+}
+
+// Blends a CheckerBoard between its two given colors
+void BlendCheckerBoard(CRGB* leds, CRGB color1, CRGB color2, int height, int width) {
+
+  for(int lerpAmount = 0; lerpAmount < 255; lerpAmount++){
+    // Matrix Loop
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+
+        if(y % 2 == 0){
+          if (x % 2 == 0) {
+            leds[XY(x, y)] = blend(color1, color2, lerpAmount);
+          } else {
+            leds[XY(x, y)] = blend(color2, color1, lerpAmount);
+          }
+        } else{
+          if (x % 2 == 1) {
+            leds[XY(x, y)] = blend(color1, color2, lerpAmount);
+          } else {
+            leds[XY(x, y)] = blend(color2, color1, lerpAmount);
+          }
+        }
+      }
+    }
     FastLED.show();
-    
-    delay(10);
+
+    delay(1);
   }
 }
