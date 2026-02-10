@@ -96,15 +96,16 @@ void ColourFade(CRGB startColor, CRGB endColor, uint16_t totalTime) {
   }
   }
 
-// Emulated a fire flicker effect 
-void Fire(CRGB* leds, int height, int width){
+// Emulate a fire flicker effect
+// TODO: Create effect by using noise, not checkerboard
+void Fire(CRGB* leds, int height, int width)BlendCheckerBoard{
   BlendCheckerBoard(leds, CRGB::Red, CRGB::Orange, height, width);
   FastLED.setBrightness(random(30,100));
   BlendCheckerBoard(leds, CRGB::Orange, CRGB::Red, height, width);
   FastLED.setBrightness(random(30,100));
 }
 
-// Blends a CheckerBoard between its two given colors
+// Blends a checker board between its two given colors
 void BlendCheckerBoard(CRGB* leds, CRGB color1, CRGB color2, int height, int width) {
 
   for(int lerpAmount = 0; lerpAmount < 255; lerpAmount++){
