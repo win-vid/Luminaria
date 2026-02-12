@@ -82,21 +82,11 @@ void setup() {
   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
   
-  // Testmuster: Alle LEDs rot
-  fill_solid(leds, NUM_LEDS, CRGB::Red);
-  fill_rainbow_circular(leds, NUM_LEDS, hue);
-  FastLED.show();
-  currentColor = CRGB::Red;
-
-
-  
   Serial.println("✓ Matrix initialisiert");
-  Serial.println("✓ Testmuster aktiv (Rot)");
   Serial.println("=================================");
 }
 
 void loop() {
-  Fire(leds, MATRIX_WIDTH, MATRIX_HEIGHT);
-  
+  Fire(leds, 8, 8, 100,100);
 }
 
