@@ -1,13 +1,26 @@
 # Luminaria
-LED-light control software.
+LED-light control software. Because other lights are too expensive and we want more control.
 
+## Setup
+### Parts
+* A control unit, ideally an ESP32S3, or similair
+* LED-Stripe / -Matrix
 
-TJB 32.01.2025
-    LuminariaMain.ino
-        - Einbindung Bibs
-        - Einbindung Serial Konsole
-        - Start Initialsiserung auf Rot
+### Software & Packages
+You need the Arduino IDE and the latest version of FastLED. You can install FastLED via the Arduino package manager.
+Additionally, you need the latest version of the ESP32S3 Dev Module which can also be installed via the Arduino IDE.
 
-    Zu Erledigen
-        - Ermitteln wo, welche LED auf der Matrix ist
-        - Matrix Koordinaten System erstellen
+### Installation
+1. Clone this repo:
+   ```git clone https://github.com/win-vid/Luminaria.git```
+2. Open ```LuminariaMain/LuminariaMain.ino``` in the Arduino-IDE.
+3. Upload.
+
+## FAQ
+Q: Arduino IDE throws a timeout exception when I try to install the ESP32S3 Dev Module
+A: The following solution applies to both windows- and linux systems. In your local file-system find the "arduino-cli.yaml" file. Open it and add the following:
+
+```
+network:
+  connection_timeout: 300s
+```
