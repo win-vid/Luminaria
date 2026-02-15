@@ -26,6 +26,12 @@
 // Bibliotheken
 // ============================================
 #include <FastLED.h>
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEScan.h>
+#include <BLEAdvertisedDevice.h>
+#include <BLE2902.h>
+#include <BLEServer.h>
 
 // ============================================
 // Hardware-Konfiguration
@@ -38,6 +44,16 @@
 #define MATRIX_HEIGHT 8         // Höhe der Matrix
 #define NUM_LEDS      (MATRIX_WIDTH * MATRIX_HEIGHT)
 
+// ============================================
+// Bluetooth-Konfiguration
+// ============================================
+BLEServer *pServer = NULL;
+BLECharacteristic *pTxCharacteristic;
+bool deviceConnected = false;
+
+#define SERVICE_UUID            "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
+#define CHARACTERISTIC_UUID_RX  "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
+#define CHARACTERISTIC_UUID_TX  "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 
 // ============================================
 // Matrix-Layout
@@ -65,6 +81,39 @@ CRGB leds[NUM_LEDS];                 // LED Array
 CRGB currentColor = CRGB::Black;     // Aktuelle Farbe der Matrix
 CRGB previousColor = CRGB::Black;    // Vorherige Farbe (für Hin-und-Her-Fades)
 int hue = 0;
+String matrixName = "Luminaria_Test_Matrix";
+
+// ============================================
+// BLE Variablen
+// ============================================
+class MyServerCallbacks: public BLEServerCallbacks {
+  void onConnect(BLEServer* pServer) {
+    deviceConnected = true;
+  }
+
+  void onDisconnect(BLEServer* pServer) {
+    deviceConnected = false;
+  }
+};
+
+void TestImage();
+
+class MyCallbacks: public BLECharacteristicCallbacks {
+void onWrite(BLECharacteristic *pCharacteristic) {
+  String rxValue = pCharacteristic->getValue().c_str();  // Use Arduino String
+  if (rxValue.length() > 0) {
+    Serial.println("Received via BLE:");
+    Serial.println(rxValue);
+
+    // Test Inputs
+    if (rxValue == "TEST"){TestImage();}
+    if (rxValue == "RED"){
+      fill_solid(leds, NUM_LEDS, CRGB::Red);
+      FastLED.show();
+    }
+  }
+}
+};
 
 // ============================================
 // Setup & Loop
@@ -84,18 +133,41 @@ void setup() {
   
   // Testmuster: Alle LEDs rot
   fill_solid(leds, NUM_LEDS, CRGB::Red);
-  fill_rainbow_circular(leds, NUM_LEDS, hue);
   FastLED.show();
-  currentColor = CRGB::Red;
+  currentColor = CRGB::Blue;
 
-
-  
   Serial.println("✓ Matrix initialisiert");
   Serial.println("✓ Testmuster aktiv (Rot)");
   Serial.println("=================================");
+
+  // BLE (Bluetooth Low Energy) initialisieren
+  Serial.println("Starte BLE");
+  BLEDevice::init(matrixName); // BLE device name
+
+  pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new MyServerCallbacks());
+
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+
+  pTxCharacteristic = pService->createCharacteristic(
+                        CHARACTERISTIC_UUID_TX,
+                        BLECharacteristic::PROPERTY_NOTIFY
+                      );
+  pTxCharacteristic->addDescriptor(new BLE2902());
+
+  BLECharacteristic * pRxCharacteristic = pService->createCharacteristic(
+                                            CHARACTERISTIC_UUID_RX,
+                                            BLECharacteristic::PROPERTY_WRITE
+                                          );
+  pRxCharacteristic->setCallbacks(new MyCallbacks());
+
+  pService->start();
+
+  pServer->getAdvertising()->start();
+  Serial.println("BLE UART service started, waiting for connection...");
 }
 
 void loop() {
-  TestImage();
+  //TestImage();
 }
 
