@@ -88,10 +88,78 @@ void ColourFade(CRGB startColor, CRGB endColor, uint16_t totalTime) {
 // Generates a rainbow test image. Used to test functionality of the LED-Matrix.
 void TestImage(){
   for(hue = 0; hue <= 255; hue++){
-    // Increment hue each frame for animation
-    fill_rainbow(leds, NUM_LEDS, hue, 7);  // 7 = spacing between LEDs
+      // Increment hue each frame for animation
+      fill_rainbow(leds, NUM_LEDS, hue, 7);  // 7 = spacing between LEDs
+      FastLED.show();
+      
+      delay(10);
+  }
+}
+
+/**
+ * Generates top-down Perlin noise based fire effect on the LED matrix.
+ *
+ * @param leds   Pointer to LED buffer
+ * @param width  Matrix width in pixels
+ * @param height Matrix height in pixels
+ * @param scale  Scale of noise. Set to 1 to fill the matrix with a single color.
+ *
+ * TODO: Sometimes we have dead pixels.
+ */
+void Fire(CRGB* leds, int height, int width, int scale, int brightness){
+  
+  // t to move the perlin noise per frame
+  static uint16_t t = 0;
+  t += 1;
+
+  for (uint8_t y = 0; y < height; y++) {
+    for (uint8_t x = 0; x < width; x++) {
+
+      // Generates noise on current x, y position multiplied by scale
+      uint8_t noise = inoise8(x * scale, y * scale, t);
+
+      // Increase contrast
+      uint8_t heat = qsub8(noise, 40);
+      heat = scale8(heat, 200);
+
+      // Calculates color based on the height of the noise
+      leds[XY(x, y)] = ColorFromPalette(
+        HeatColors_p,
+        heat,
+        brightness,
+        LINEARBLEND
+      );
+    }
+  }
+  FastLED.show();
+  delay(15);
+}
+
+// Blends a checker board between its two given colors
+void BlendCheckerBoard(CRGB* leds, CRGB color1, CRGB color2, int height, int width) {
+
+  for(int lerpAmount = 0; lerpAmount < 255; lerpAmount++){
+    // Matrix Loop
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+
+        if(y % 2 == 0){
+          if (x % 2 == 0) {
+            leds[XY(x, y)] = blend(color1, color2, lerpAmount);
+          } else {
+            leds[XY(x, y)] = blend(color2, color1, lerpAmount);
+          }
+        } else{
+          if (x % 2 == 1) {
+            leds[XY(x, y)] = blend(color1, color2, lerpAmount);
+          } else {
+            leds[XY(x, y)] = blend(color2, color1, lerpAmount);
+          }
+        }
+      }
+    }
     FastLED.show();
-    
-    delay(10);
+
+    delay(1);
   }
 }
